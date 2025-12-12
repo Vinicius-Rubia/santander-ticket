@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { TICKET_TYPE_SELECT } from "@/constants/ticket-config";
 import type { TicketTypeValue } from "@/enums/ticket-type";
@@ -23,8 +24,12 @@ import { CreateTicketSchema } from "@/validations/create-ticket-schema";
 import type { CreateTicketSchemaType } from "@/validations/schemas-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function CreateTicketForm({ className }: React.ComponentProps<"form">) {
+  const navigate = useNavigate();
+
   const form = useForm<CreateTicketSchemaType>({
     resolver: zodResolver(CreateTicketSchema),
     defaultValues: {
@@ -33,8 +38,13 @@ export function CreateTicketForm({ className }: React.ComponentProps<"form">) {
     },
   });
 
-  const onSubmit = (data: CreateTicketSchemaType) => {
+  const { formState } = form;
+
+  const onSubmit = async (data: CreateTicketSchemaType) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log(data);
+    navigate("/tickets");
+    toast.success("Ticket criado com sucesso!");
   };
 
   const ticketTypes = Object.keys(TICKET_TYPE_SELECT).map(
@@ -47,7 +57,7 @@ export function CreateTicketForm({ className }: React.ComponentProps<"form">) {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-6 grid", className)}
       >
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="grid sm:grid-cols-2 items-baseline gap-6">
           <FormField
             control={form.control}
             name="ticketType"
@@ -108,8 +118,13 @@ export function CreateTicketForm({ className }: React.ComponentProps<"form">) {
             </FormItem>
           )}
         />
-        <Button size="lg" className="sm:ml-auto">
-          Enviar
+        <Button
+          size="lg"
+          className="sm:ml-auto"
+          disabled={formState.isSubmitting}
+        >
+          {formState.isSubmitting && <Spinner />}
+          {formState.isSubmitting ? "Criando..." : "Criar ticket"}
         </Button>
       </form>
     </Form>

@@ -7,13 +7,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { ReplyTicketSchema } from "@/validations/reply-ticket-schema";
 import type { ReplyTicketSchemaType } from "@/validations/schemas-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function ReplyTicketForm() {
+  const navigate = useNavigate();
+
   const form = useForm<ReplyTicketSchemaType>({
     resolver: zodResolver(ReplyTicketSchema),
     defaultValues: {
@@ -21,8 +26,13 @@ export function ReplyTicketForm() {
     },
   });
 
-  const onSubmit = (data: ReplyTicketSchemaType) => {
+  const { formState } = form;
+
+  const onSubmit = async (data: ReplyTicketSchemaType) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log(data);
+    navigate("/tickets");
+    toast.success("Tickect respondido com sucesso!");
   };
 
   return (
@@ -48,8 +58,13 @@ export function ReplyTicketForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="ml-auto">
-          Enviar resposta
+        <Button
+          type="submit"
+          className="ml-auto"
+          disabled={formState.isSubmitting}
+        >
+          {formState.isSubmitting && <Spinner />}
+          {formState.isSubmitting ? "Enviando..." : "Enviar resposta"}
         </Button>
       </form>
     </Form>

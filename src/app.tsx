@@ -2,6 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import { Activity, useState } from "react";
 import { SplashScreenLoader } from "./components/splash-screen-loader";
 import { ThemeProvider } from "./components/theme-provider";
+import { Toaster } from "./components/ui/sonner";
 import { AppRoutes } from "./routes/router";
 
 export function App() {
@@ -17,6 +18,7 @@ export function App() {
 
       <Activity mode={!loading ? "visible" : "hidden"}>
         <AppRoutes />
+        <Toaster richColors position="top-center" />
       </Activity>
     </ThemeProvider>
   );

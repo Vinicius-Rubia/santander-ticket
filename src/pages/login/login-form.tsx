@@ -34,7 +34,7 @@ export function LoginForm({
   const onSubmit = async (data: LoginSchemaType) => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log(data);
-    navigate("/tickets");
+    navigate("/tickets", { replace: true });
   };
 
   return (
@@ -98,7 +98,8 @@ export function LoginForm({
           className="w-full"
           disabled={formState.isSubmitting}
         >
-          {formState.isSubmitting ? <Spinner /> : "Entrar"}
+          {formState.isSubmitting && <Spinner />}
+          {formState.isSubmitting ? "Entrando..." : "Entrar"}
         </Button>
         <p className="text-center">
           Não tem um conta?{" "}
